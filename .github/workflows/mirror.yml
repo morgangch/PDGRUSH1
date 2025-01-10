@@ -1,0 +1,116 @@
+
+name: PDGRUSH1
+
+on:
+  push:
+    branches-ignore:
+      - 'ga-ignore-*'
+  pull_request:
+    branches-ignore:
+      - 'ga-ignore-*'
+
+jobs:
+  check_coding_style:
+    if: ${{ github.repository == 'morgangch/PDGRUSH1' }}
+    name: "Use coding_style_checker"
+    runs-on: ubuntu-latest
+    container: ghcr.io/epitech/coding-style-checker:latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: check_coding_style
+        run: |
+          check.sh $(pwd) $(pwd)
+          CODING_STYLE_ERRORS=$(cat $(pwd)/coding-style-reports.log)
+          for ERRORS in $CODING_STYLE_ERRORS; do
+            array=(`echo $ERRORS | sed 's/:/\n/g'`)
+            echo "::error file=${array[1]#./},title=${array[3]#./} coding style errors detected: ${array[2]#./}::${array[4]#./}"
+          done
+          if [[ -n $CODING_STYLE_ERRORS ]]
+          then
+            exit 1
+          else
+            echo No coding style errors detected
+          fi
+  
+  check_repo:
+    if: ${{ github.repository == 'morgangch/PDGRUSH1' }}
+    name: "Checks if the repository is clean and void of any unwanted files (temp files, binary files, etc.)"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: check_repo
+        run: |
+          UNWANTED_FILES=$(find . -type f -not -path "./git/*" -wholename "*tmp/*" -or -name "*~" -or -name "*.o" -or -name "*.so" -or -name "*.gcno" -or -name "*.gcda" -or -name "*#" -or -name "#*" -or -name "*.gcov")
+          for FILES in $UNWANTED_FILES; do
+            echo "::error file=${FILES#./},title=Unwanted file detected::${FILES#./}"
+          done
+          if [[ -n $UNWANTED_FILES ]]
+          then
+            exit 1
+          else
+            echo No unwanted files detected
+          fi
+
+  check_program_compilation:
+    needs: [check_repo]
+    name: "Checks if make compil and test all binary listed in the ARGUMENTS variable"
+    runs-on: ubuntu-latest
+    container:
+      image: epitechcontent/epitest-docker:latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for Makefile and compile
+        run: |
+          if [ -f Makefile ]; then
+            for target in all clean fclean re; do
+              make $target
+              if [ make_exit_code -ne 0 ]; then
+                echo "Error: make $target failed with exit code $?"
+                exit 1
+              fi
+            done
+          else
+            echo "Makefile not found, skipping compilation and testing."
+          fi
+        timeout-minutes: 2
+
+  run_tests:
+    needs: [check_program_compilation]
+    name: "Runs tests with criterion"
+    runs-on: ubuntu-latest
+    container:
+      image: epitechcontent/epitest-docker:latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check if tests_run rule exists
+        run: |
+          if [ -f Makefile ]; then
+            if cat Makefile | grep -q "tests_run"; then
+              make tests_run
+              if [ $? -eq 0 ]; then
+                echo "Tests run successfully"
+              else
+                echo "Error: make tests_run failed"
+                exit 1
+              fi
+            else
+              echo "tests_run rule not found, skipping tests."
+            fi
+          else
+            echo "Makefile not found, skipping tests."
+          fi
+        timeout-minutes: 2
+
+  push_to_mirror:
+    needs: [check_coding_style, run_tests, check_repo, check_program_compilation]
+    if: ${{ github.event_name == 'push' && github.actor != 'github-actions[bot]' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url: ${{ vars.MIRROR_URL }}
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
