@@ -57,7 +57,7 @@ class Test:
             print("Repr expected:", repr(expected))
             print("Repr output:", repr(output))
         else:
-            print("Output matches expected!")
+            print("Expected output and actual output don't differ.")
    
     def get_status(self, output=None, error:int=None):
         if output is None:
@@ -191,7 +191,7 @@ def test_main():
             "description": "Operators: sa pb pb pb | Ints: 2 1 3 6 5 8 | Expected: KO: ([6,5,8],[3,2,1])",
             "cmd": f'cd .. && echo "sa pb pb pb" | ./{Binary_name} 2 1 3 6 5 8',
             "expected_stdout": "KO: ([6,5,8],[3,2,1])\n",
-            "expected_returncode": 0
+            "expected_returncode": 1
         }
     ]
     
@@ -235,6 +235,8 @@ if __name__ == "__main__":
     # Affichage détaillé de chaque test
     for test in tests:
         if test.status:
-            prGreen(f"Test {test.name} passed!\n")
+            prGreen(f"Test {test.name} passed!")
+            print(f" ({test.description})")
         else:
-            prRed(f"Test {test.name} failed!\n")
+            prRed(f"Test {test.name} failed!")
+            print(f" ({test.description})\nAt line {test.line}")
