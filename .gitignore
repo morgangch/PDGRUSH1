@@ -71,4 +71,9 @@ pushswap_checker
 # Ignore the Cstyle logs
 *.log
 
+### UNIT TEST COVERAGE HUNIT
+# Ignore the coverage files
+*.tix
+*.html
+
 # End of https://www.toptal.com/developers/gitignore/api/haskell,linux,visualstudiocode
