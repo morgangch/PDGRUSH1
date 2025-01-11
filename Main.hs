@@ -72,12 +72,12 @@ main = do
 
 processArgs :: [Int] -> Maybe [String] -> IO ()
 processArgs l_a (Just args)
-    | null args = exitWith (ExitFailure 84)
+    | null args = putStrLn $ resultMessage l_a []
     | hasInvalidOp args = exitWith (ExitFailure 84)
     | otherwise =
         let (final_l_a, final_l_b) = foldl doOperation (l_a, []) args
         in putStrLn $ resultMessage final_l_a final_l_b
-processArgs _ Nothing = exitWith (ExitFailure 84)
+processArgs l_a Nothing = putStrLn $ resultMessage l_a []
 
 resultMessage :: [Int] -> [Int] -> String
 resultMessage final_l_a final_l_b
