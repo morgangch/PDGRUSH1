@@ -21,9 +21,9 @@ all: $(NAME)
 $(NAME):
 	@ghc $(SRC) -o $(NAME) $(GHC_FLAGS)
 
-install: 
+install:
 	stack update
-	stack install HUnit 
+	stack install HUnit
 
 $(TEST_NAME): install
 	@ghc $(TEST_SRC) -o $(TEST_NAME) -package HUnit -fhpc
