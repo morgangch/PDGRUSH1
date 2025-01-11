@@ -1,0 +1,71 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style type="text/css">
+span.lineno { color: white; background: #aaaaaa; border-right: solid white 12px }
+span.nottickedoff { background: yellow}
+span.istickedoff { background: white }
+span.tickonlyfalse { margin: -1px; border: 1px solid #f20913; background: #f20913 }
+span.tickonlytrue  { margin: -1px; border: 1px solid #60de51; background: #60de51 }
+span.funcount { font-size: small; color: orange; z-index: 2; position: absolute; right: 20 }
+span.decl { font-weight: bold }
+span.spaces    { background: white }
+</style>
+</head>
+<body>
+<pre>
+<span class="decl"><span class="nottickedoff">never executed</span> <span class="tickonlytrue">always true</span> <span class="tickonlyfalse">always false</span></span>
+</pre>
+<pre>
+<span class="lineno">    1 </span>module TestMain (testIsOperator, testParseArgs, testMyReadMaybe, testParseInts, testHasInvalidOp, testHasInvalidInt) where
+<span class="lineno">    2 </span>import Test.HUnit
+<span class="lineno">    3 </span>import Main (isOperator, parseArgs, myReadMaybe, parseInts, hasInvalidOp, hasInvalidInt)
+<span class="lineno">    4 </span>
+<span class="lineno">    5 </span><span class="decl"><span class="istickedoff">testIsOperator = TestList [</span>
+<span class="lineno">    6 </span><span class="spaces">    </span><span class="istickedoff">TestCase (assertBool <span class="nottickedoff">&quot;for (isOperator \&quot;sa\&quot;),&quot;</span> (isOperator &quot;sa&quot;)),</span>
+<span class="lineno">    7 </span><span class="spaces">    </span><span class="istickedoff">TestCase (assertBool <span class="nottickedoff">&quot;for (isOperator \&quot;sb\&quot;),&quot;</span> (isOperator &quot;sb&quot;)),</span>
+<span class="lineno">    8 </span><span class="spaces">    </span><span class="istickedoff">TestCase (assertBool <span class="nottickedoff">&quot;for (isOperator \&quot;sc\&quot;),&quot;</span> (isOperator &quot;sc&quot;)),</span>
+<span class="lineno">    9 </span><span class="spaces">    </span><span class="istickedoff">TestCase (assertBool <span class="nottickedoff">&quot;for (isOperator \&quot;pa\&quot;),&quot;</span> (isOperator &quot;pa&quot;)),</span>
+<span class="lineno">   10 </span><span class="spaces">    </span><span class="istickedoff">TestCase (assertBool <span class="nottickedoff">&quot;for (isOperator \&quot;pb\&quot;),&quot;</span> (isOperator &quot;pb&quot;)),</span>
+<span class="lineno">   11 </span><span class="spaces">    </span><span class="istickedoff">TestCase (assertBool <span class="nottickedoff">&quot;for (isOperator \&quot;ra\&quot;),&quot;</span> (isOperator &quot;ra&quot;)),</span>
+<span class="lineno">   12 </span><span class="spaces">    </span><span class="istickedoff">TestCase (assertBool <span class="nottickedoff">&quot;for (isOperator \&quot;rb\&quot;),&quot;</span> (isOperator &quot;rb&quot;)),</span>
+<span class="lineno">   13 </span><span class="spaces">    </span><span class="istickedoff">TestCase (assertBool <span class="nottickedoff">&quot;for (isOperator \&quot;rr\&quot;),&quot;</span> (isOperator &quot;rr&quot;)),</span>
+<span class="lineno">   14 </span><span class="spaces">    </span><span class="istickedoff">TestCase (assertBool <span class="nottickedoff">&quot;for (isOperator \&quot;rra\&quot;),&quot;</span> (isOperator &quot;rra&quot;)),</span>
+<span class="lineno">   15 </span><span class="spaces">    </span><span class="istickedoff">TestCase (assertBool <span class="nottickedoff">&quot;for (isOperator \&quot;rrb\&quot;),&quot;</span> (isOperator &quot;rrb&quot;)),</span>
+<span class="lineno">   16 </span><span class="spaces">    </span><span class="istickedoff">TestCase (assertBool <span class="nottickedoff">&quot;for (isOperator \&quot;rrr\&quot;),&quot;</span> (isOperator &quot;rrr&quot;)),</span>
+<span class="lineno">   17 </span><span class="spaces"></span><span class="istickedoff"></span>
+<span class="lineno">   18 </span><span class="spaces">    </span><span class="istickedoff">TestCase (assertBool <span class="nottickedoff">&quot;for (isOperator \&quot; \&quot;),&quot;</span> (not (isOperator &quot; &quot;))),</span>
+<span class="lineno">   19 </span><span class="spaces">    </span><span class="istickedoff">TestCase (assertBool <span class="nottickedoff">&quot;for (isOperator \&quot;invalid\&quot;),&quot;</span> (not (isOperator &quot;invalid&quot;)))</span>
+<span class="lineno">   20 </span><span class="spaces">    </span><span class="istickedoff">]</span></span>
+<span class="lineno">   21 </span>
+<span class="lineno">   22 </span><span class="decl"><span class="istickedoff">testParseArgs = TestList [</span>
+<span class="lineno">   23 </span><span class="spaces">    </span><span class="istickedoff">TestCase (assertEqual <span class="nottickedoff">&quot;for (parseArgs \&quot;sa sb\&quot;),&quot;</span> (Just [&quot;sa&quot;, &quot;sb&quot;]) (parseArgs &quot;sa sb&quot;)),</span>
+<span class="lineno">   24 </span><span class="spaces">    </span><span class="istickedoff">TestCase (assertEqual <span class="nottickedoff">&quot;for (parseArgs \&quot;sa invalid\&quot;),&quot;</span> (Just [&quot;sa&quot;, &quot;IP&quot;]) (parseArgs &quot;sa invalid&quot;)),</span>
+<span class="lineno">   25 </span><span class="spaces">    </span><span class="istickedoff">TestCase (assertEqual <span class="nottickedoff">&quot;for (parseArgs \&quot;\&quot;),&quot;</span> (Just []) (parseArgs &quot;&quot;)),</span>
+<span class="lineno">   26 </span><span class="spaces">    </span><span class="istickedoff">TestCase (assertEqual <span class="nottickedoff">&quot;for (parseArgs \&quot;invalid\&quot;),&quot;</span> (Just [&quot;IP&quot;]) (parseArgs &quot;invalid&quot;)),</span>
+<span class="lineno">   27 </span><span class="spaces">    </span><span class="istickedoff">TestCase (assertEqual <span class="nottickedoff">&quot;for (parseArgs \&quot;su invalid\&quot;),&quot;</span> (Just [&quot;sa&quot;, &quot;IP&quot;]) (parseArgs &quot;sa su&quot;))    </span>
+<span class="lineno">   28 </span><span class="spaces">    </span><span class="istickedoff">]</span></span>
+<span class="lineno">   29 </span>
+<span class="lineno">   30 </span><span class="decl"><span class="istickedoff">testMyReadMaybe = TestList [</span>
+<span class="lineno">   31 </span><span class="spaces">    </span><span class="istickedoff">TestCase (assertEqual <span class="nottickedoff">&quot;for (myReadMaybe \&quot;123\&quot;),&quot;</span> 123 (myReadMaybe &quot;123&quot;)),</span>
+<span class="lineno">   32 </span><span class="spaces">    </span><span class="istickedoff">TestCase (assertEqual <span class="nottickedoff">&quot;for (myReadMaybe \&quot;abc\&quot;),&quot;</span> (-1) (myReadMaybe &quot;abc&quot;))</span>
+<span class="lineno">   33 </span><span class="spaces">    </span><span class="istickedoff">]</span></span>
+<span class="lineno">   34 </span>
+<span class="lineno">   35 </span><span class="decl"><span class="istickedoff">testParseInts = TestList [</span>
+<span class="lineno">   36 </span><span class="spaces">    </span><span class="istickedoff">TestCase (assertEqual <span class="nottickedoff">&quot;for (parseInts [\&quot;123\&quot;, \&quot;456\&quot;]),&quot;</span> [123, 456] (parseInts [&quot;123&quot;, &quot;456&quot;])),</span>
+<span class="lineno">   37 </span><span class="spaces">    </span><span class="istickedoff">TestCase (assertEqual <span class="nottickedoff">&quot;for (parseInts [\&quot;123\&quot;, \&quot;abc\&quot;]),&quot;</span> [123, -1] (parseInts [&quot;123&quot;, &quot;abc&quot;]))</span>
+<span class="lineno">   38 </span><span class="spaces">    </span><span class="istickedoff">]</span></span>
+<span class="lineno">   39 </span>
+<span class="lineno">   40 </span><span class="decl"><span class="istickedoff">testHasInvalidOp = TestList [</span>
+<span class="lineno">   41 </span><span class="spaces">    </span><span class="istickedoff">TestCase (assertBool <span class="nottickedoff">&quot;for (hasInvalidOp [\&quot;sa\&quot;, \&quot;sb\&quot;]),&quot;</span> (not (hasInvalidOp [&quot;sa&quot;, &quot;sb&quot;]))),</span>
+<span class="lineno">   42 </span><span class="spaces">    </span><span class="istickedoff">TestCase (assertBool <span class="nottickedoff">&quot;for (hasInvalidOp [\&quot;sa\&quot;, \&quot;IP\&quot;]),&quot;</span> (hasInvalidOp [&quot;sa&quot;, &quot;IP&quot;]))</span>
+<span class="lineno">   43 </span><span class="spaces">    </span><span class="istickedoff">]</span></span>
+<span class="lineno">   44 </span>
+<span class="lineno">   45 </span><span class="decl"><span class="istickedoff">testHasInvalidInt = TestList [</span>
+<span class="lineno">   46 </span><span class="spaces">    </span><span class="istickedoff">TestCase (assertBool <span class="nottickedoff">&quot;for (hasInvalidInt [123, 456]),&quot;</span> (not (hasInvalidInt [123, 456]))),</span>
+<span class="lineno">   47 </span><span class="spaces">    </span><span class="istickedoff">TestCase (assertBool <span class="nottickedoff">&quot;for (hasInvalidInt [123, -1]),&quot;</span> (hasInvalidInt [123, -1]))</span>
+<span class="lineno">   48 </span><span class="spaces">    </span><span class="istickedoff">]</span></span>
+
+</pre>
+</body>
+</html>
