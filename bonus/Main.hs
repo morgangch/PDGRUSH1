@@ -12,6 +12,7 @@ import Data.Char (isDigit)
 import CommandChecker (isSorted, doOperation)
 import Text.Read (readMaybe)
 import My (myQuickSort)
+import Data.Maybe (Maybe(Nothing))
 
 isOperator :: String -> Bool
 isOperator "sa" = True
@@ -28,6 +29,10 @@ isOperator "rrr" = True
 isOperator "qsa" = True
 isOperator "qsb" = True
 isOperator "qsc" = True
+isOperator "rdm" = True
+isOperator "sfa" = True
+isOperator "sfb" = True
+isOperator "sfc" = True
 isOperator " " = False
 isOperator _ = False
 
@@ -41,26 +46,19 @@ parseArgs (x:xs)
             else Just ["IP"]
     | otherwise = Just ["IP"]
 
-myReadMaybe :: String -> Int
-myReadMaybe s = case readMaybe s of
-    Just x -> x
-    Nothing -> -1
-
-parseInts :: [String] -> [Int]
+parseInts :: [String] -> [Maybe Int]
 parseInts [] = []
-parseInts (x:xs)
-    | all isDigit x = myReadMaybe x : parseInts xs
-    | otherwise = (-1) : parseInts xs
+parseInts (x:xs) = readMaybe x : parseInts xs
 
 hasInvalidOp :: [String] -> Bool
 hasInvalidOp [] = False
 hasInvalidOp ["IP"] = True
 hasInvalidOp (_:xs) = hasInvalidOp xs
 
-hasInvalidInt :: [Int] -> Bool
+hasInvalidInt :: [Maybe Int] -> Bool
 hasInvalidInt [] = False
 hasInvalidInt (x:xs)
-    | x == -1 = True
+    | x isNothing = True
     | otherwise = hasInvalidInt xs
 
 main :: IO ()

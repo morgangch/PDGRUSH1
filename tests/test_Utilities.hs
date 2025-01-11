@@ -53,3 +53,4 @@ testRrr = TestList [
     "rrr empty lists" ~: rrr ([] :: [Int]) ([] :: [Int]) ~?= ([], []),
     "rrr non-empty lists" ~: rrr [1, 2] [3, 4] ~?= ([2, 1], [4, 3])
     ]
+

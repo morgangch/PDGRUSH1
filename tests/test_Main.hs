@@ -47,3 +47,5 @@ testHasInvalidInt = TestList [
     TestCase (assertBool "for (hasInvalidInt [123, 456])," (not (hasInvalidInt [123, 456]))),
     TestCase (assertBool "for (hasInvalidInt [123, -1])," (hasInvalidInt [123, -1]))
     ]
+
+

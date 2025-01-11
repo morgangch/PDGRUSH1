@@ -8,6 +8,27 @@ Makefile_path = os.path.join(os.path.dirname(__file__), '../Makefile')
 Binary_name = "pushswap_checker"
 tests = {}
 
+class Test:
+    def __init__(self, name, line, description, stdout_expected, stderr_expected, compare, action):
+        self.name = name
+        self.line = line
+        self.description = description
+        self.stdout_expected = stdout_expected
+        self.stderr_expected = stderr_expected
+        self.subprocess = subprocess.run(
+            action,
+            shell=True,
+            capture_output=True,
+            text=True
+        )
+        self.output = self.subprocess.stdout
+        self.error = self.subprocess.stderr
+        self.status = compare(self.expected, self.output)
+        
+    def compare_output(self, expected, output):
+        return expected == output
+            
+
 def get_line_number():
     """Get the line number of the function that called this function."""
     return f"{__file__}:{sys._getframe(1).f_lineno}"
@@ -43,7 +64,8 @@ def test_makefile():
         "tests_re",
         "Bonus",
         "Bonus_re",
-        None  # Equivalent to just "make"
+        "Bonus_tests_run",
+        None  # Equivalent to just "make" or "make all"
     ]
     for i, cmd in enumerate(makefile_commands, 1):
         print(f"Testing Makefile | Command: {cmd or 'make'} | Expected: 0")
@@ -65,7 +87,7 @@ def error_messages(test, expected, actual):
     return f"Test {test} failed. Expected: {expected}, got: {actual}"
 
 def test_main():
-    print("Testing main | Operators: pa pa pb | Ints: 1 2 3 4 5 | Expected: OK")
+    print("Testing main | Operators: pa pa pb | Ints: 1 2 3 4 5 | Expected: KO: ([2,3,4,5],[1])")
     process_1 = subprocess.run(
         f'cd .. && echo "pa pa pb" | ./{Binary_name} 1 2 3 4 5',
         shell=True,
@@ -73,8 +95,8 @@ def test_main():
         text=True
     )
     assert process_1.returncode == 0, error_messages("B1", "0", process_1.returncode)
-    assert process_1.stdout == "OK\n", error_messages("B1", "OK", process_1.stdout)
-    add_test("B1", process_1.returncode == 0 and process_1.stdout == "OK\n", get_line_number())
+    assert process_1.stdout == "KO: ([2,3,4,5],[1])\n", error_messages("B1", "KO: ([2,3,4,5],[1])\n", process_1.stdout)
+    add_test("B1", process_1.returncode == 0 and process_1.stdout == "KO: ([2,3,4,5],[1])\n", get_line_number())
     
     print("Testing main | Operators: undefined | Ints: 1 2 3 4 5 | Expected: return 84")
     process_2 = subprocess.run(

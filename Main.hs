@@ -8,9 +8,9 @@
 module Main where
 import System.Exit (exitWith, ExitCode(..))
 import System.Environment (getArgs)
-import Data.Char (isDigit)
 import CommandChecker (isSorted, doOperation)
 import Text.Read (readMaybe)
+import Data.Maybe (isNothing, catMaybes)
 
 isOperator :: String -> Bool
 isOperator "sa" = True
@@ -37,26 +37,19 @@ parseArgs (x:xs)
             else Just ["IP"]
     | otherwise = Just ["IP"]
 
-myReadMaybe :: String -> Int
-myReadMaybe s = case readMaybe s of
-    Just x -> x
-    Nothing -> -1
-
-parseInts :: [String] -> [Int]
+parseInts :: [String] -> [Maybe Int]
 parseInts [] = []
-parseInts (x:xs)
-    | all isDigit x = myReadMaybe x : parseInts xs
-    | otherwise = (-1) : parseInts xs
+parseInts (x:xs) = readMaybe x : parseInts xs
 
 hasInvalidOp :: [String] -> Bool
 hasInvalidOp [] = False
 hasInvalidOp ["IP"] = True
 hasInvalidOp (_:xs) = hasInvalidOp xs
 
-hasInvalidInt :: [Int] -> Bool
+hasInvalidInt :: [Maybe Int] -> Bool
 hasInvalidInt [] = False
 hasInvalidInt (x:xs)
-    | x == -1 = True
+    | isNothing x = True
     | otherwise = hasInvalidInt xs
 
 main :: IO ()
@@ -68,7 +61,7 @@ main = do
     else do
         line <- getLine
         let s = parseArgs (words line)
-        processArgs i s
+        processArgs (catMaybes i) s
 
 processArgs :: [Int] -> Maybe [String] -> IO ()
 processArgs l_a (Just args)
