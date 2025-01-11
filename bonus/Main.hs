@@ -92,5 +92,5 @@ myshowfinal (x:xs) (y:ys) | x == y = "\ESC[32m" ++ show x ++ "\ESC[0m," ++ mysho
 
 resultMessage :: [Int] -> [Int] -> String
 resultMessage final_l_a final_l_b
-    | isSorted final_l_a = "\ESC[32mOK\ESC[0m"
+    | isSorted final_l_a = "\ESC[32mOK\ESC[0m: ([" ++ myshowfinal final_l_a (myQuickSort (<) final_l_a) ++ "],[" ++ myshowfinal final_l_b (myQuickSort (<) final_l_b) ++ "])"
     | otherwise = "\ESC[31mKO\ESC[0m: ([" ++ myshowfinal final_l_a (myQuickSort (<) final_l_a) ++ "],[" ++ myshowfinal final_l_b (myQuickSort (<) final_l_b) ++ "])"
