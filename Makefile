@@ -9,14 +9,22 @@ NAME = pushswap_checker
 TEST_NAME = test
 
 MAIN = Main
+TEST_MAIN = Test
+
 SRCS = 	Main.hs \
 		CommandChecker.hs \
 		Utilities.hs
+
 TEST_DIR = tests/
-TEST_SRC = $(TEST_DIR)test.hs
+TEST_SRC = 	$(TEST_DIR)test.hs \
+			$(TEST_DIR)test_CommandChecker.hs \
+			$(TEST_DIR)test_Utilities.hs \
+			$(TEST_DIR)test_Main.hs
+
 COVERAGE_DIR = $(TEST_DIR)coverage/
 
 GHC_FLAGS = -Wall -Wextra -main-is $(MAIN)
+TEST_FLAGS = -package HUnit -fhpc -main-is $(TEST_MAIN)
 
 all: $(NAME)
 
@@ -28,7 +36,7 @@ install:
 	stack install HUnit
 
 $(TEST_NAME): install
-	@ghc $(TEST_SRC) -o $(TEST_NAME) -package HUnit -fhpc
+	@ghc $(TEST_SRC) -o $(TEST_NAME) $(TEST_FLAGS)
 
 clean:
 	rm -f *.hi *.o *.tix

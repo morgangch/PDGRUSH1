@@ -67,4 +67,8 @@ cabal.project.local~
 *.o
 pushswap_checker
 
+### EPITECH FILES
+# Ignore the Cstyle logs
+*.log
+
 # End of https://www.toptal.com/developers/gitignore/api/haskell,linux,visualstudiocode

@@ -6,7 +6,7 @@
 -}
 
 module Main where
-import System.Exit (exitFailure, exitWith, ExitCode(..))
+import System.Exit (exitWith, ExitCode(..))
 import System.Environment (getArgs)
 import Data.Char (isDigit)
 import CommandChecker (isSorted, doOperation)
@@ -75,7 +75,7 @@ main = do
 processArgs :: [Int] -> Maybe [String] -> IO ()
 processArgs l_a (Just args)
     | null args = exitWith (ExitFailure 84)
-    | hasInvalidOp args = exitFailure
+    | hasInvalidOp args = exitWith (ExitFailure 84)
     | otherwise =
         let (final_l_a, final_l_b) = foldl doOperation (l_a, []) args
         in putStrLn $ resultMessage final_l_a final_l_b
