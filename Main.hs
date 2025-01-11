@@ -81,5 +81,5 @@ processArgs l_a Nothing = putStrLn $ resultMessage l_a []
 
 resultMessage :: [Int] -> [Int] -> String
 resultMessage final_l_a final_l_b
-    | isSorted final_l_a = "OK"
+    | isSorted final_l_a && null final_l_b = "OK"
     | otherwise = "KO: (" ++ show final_l_a ++ "," ++ show final_l_b ++ ")"
