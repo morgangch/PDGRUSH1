@@ -11,6 +11,7 @@ import System.Environment (getArgs)
 import Data.Char (isDigit)
 import CommandChecker (isSorted, doOperation)
 import Text.Read (readMaybe)
+import My (myQuickSort)
 
 isOperator :: String -> Bool
 isOperator "sa" = True
@@ -81,7 +82,15 @@ processArgs l_a (Just args)
         in putStrLn $ resultMessage final_l_a final_l_b
 processArgs _ Nothing = exitWith (ExitFailure 84)
 
+-- print the list with color : green if sorted, red otherwise number per number
+myshowfinal :: [Int] -> [Int] -> String
+myshowfinal [] _ = ""
+myshowfinal [x] [y] | x == y = "\ESC[32m" ++ show x ++ "\ESC[0m"
+    | otherwise = "\ESC[31m" ++ show x ++ "\ESC[0m"
+myshowfinal (x:xs) (y:ys) | x == y = "\ESC[32m" ++ show x ++ "\ESC[0m," ++ myshowfinal xs ys
+    | otherwise = "\ESC[31m" ++ show x ++ "\ESC[0m," ++ myshowfinal xs ys
+
 resultMessage :: [Int] -> [Int] -> String
 resultMessage final_l_a final_l_b
-    | isSorted final_l_a = "OK"
-    | otherwise = "KO: (" ++ show final_l_a ++ "," ++ show final_l_b ++ ")"
+    | isSorted final_l_a = "\ESC[32mOK\ESC[0m: ([" ++ myshowfinal final_l_a (myQuickSort (<) final_l_a) ++ "],[" ++ myshowfinal final_l_b (myQuickSort (<) final_l_b) ++ "])"
+    | otherwise = "\ESC[31mKO\ESC[0m: ([" ++ myshowfinal final_l_a (myQuickSort (<) final_l_a) ++ "],[" ++ myshowfinal final_l_b (myQuickSort (<) final_l_b) ++ "])"
