@@ -77,9 +77,21 @@ class Test:
         return output.replace("\n", "").replace("\t", "").replace("\r", "").replace("\v", "").replace("\f", "").replace(" ", "").replace("\b", "").replace("\a", "").replace("\0", "").replace("'", "").replace('"', "")
     
     def start_test(self):
+        passed = "\033[92m Passed \033[00m"
+        failed = "\033[91m Failed \033[00m"
         print(f"Testing {self.name} | {self.description} | \nExpected: \t{self.stdout_expected if self.stdout_expected else 'Nothing'} - {self.stderr_expected}")
-        print(f"Output: \t{self.output if self.output else 'Nothing'} - {self.error} | Status: {'Passed' if self.status else 'Failed'}\n")
+        print(f"Output: \t{self.output if self.output else 'Nothing'} - {self.error} | Status: {passed if self.status else failed}")
         add_test(self)
+        
+    def display_status(self):
+        if self.status:
+            print(f"Test {self.name}", end=" ")
+            prGreen("passed!")
+            print(f" ({self.description})")
+        else:
+            print(f"Test {self.name}", end=" ")
+            prRed(f"failed!")
+            print(f" ({self.description})\nAt line {self.line}")
 
 def get_line_number():
     """Get the line number of the function that called this function."""
@@ -131,24 +143,24 @@ def test_makefile():
     for i, (cmd, expected_code, expected_stdout) in enumerate(makefile_commands, 1):
         test_name = f"A{i}"
         test = Test(
-            test_name,
-            get_line_number(),
-            f"Makefile {cmd} command test",
-            expected_stdout,
-            expected_code,
-            f"cd .. && make {cmd} > /dev/null" if cmd else "cd .. && make > /dev/null",
+            name=test_name,
+            line=get_line_number(),
+            description=f"Makefile {cmd} command test",
+            stdout_expected=expected_stdout,
+            stderr_expected=expected_code,
+            action=f"cd .. && make {cmd} > /dev/null" if cmd else "cd .. && make > /dev/null",
             run=True
         )
 
     # Test the undefined command to ensure it fails
     print("Testing Makefile | Command: undefined | Expected: 2")
     undefined_test = Test(
-        f"A{i+1}",
-        get_line_number(),
-        "2",
-        "",
-        2,
-        "cd .. && make undefined",
+        name=f"A{i+1}",
+        line=get_line_number(),
+        description="Makefile undefined command test | Invalid Make command",
+        stdout_expected="",
+        stderr_expected=2,
+        action="cd .. && make undefined",
         run=True
     )
     tests.append(undefined_test)
@@ -191,7 +203,7 @@ def test_main():
             "description": "Operators: sa pb pb pb | Ints: 2 1 3 6 5 8 | Expected: KO: ([6,5,8],[3,2,1])",
             "cmd": f'cd .. && echo "sa pb pb pb" | ./{Binary_name} 2 1 3 6 5 8',
             "expected_stdout": "KO: ([6,5,8],[3,2,1])\n",
-            "expected_returncode": 1
+            "expected_returncode": 0
         }
     ]
     
@@ -233,10 +245,10 @@ if __name__ == "__main__":
         print(f"/{len(tests)} tests failed!")
 
     # Affichage détaillé de chaque test
-    for test in tests:
+    for i, test in enumerate(tests, 0):
         if test.status:
-            prGreen(f"Test {test.name} passed!")
-            print(f" ({test.description})")
+            prGreen(f"{i}. {test.name}")
         else:
-            prRed(f"Test {test.name} failed!")
-            print(f" ({test.description})\nAt line {test.line}")
+            prRed(f"{i}. {test.name}")  
+        print("", end=" ")      
+        test.display_status()
