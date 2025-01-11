@@ -7,6 +7,7 @@
 
 module Main where
 import System.Exit()
+import System.Environment (getArgs)
 
 isOperator :: String -> Bool
 isOperator "sa" = True
@@ -60,6 +61,19 @@ rrr :: [a] -> [a] -> ([a], [a])
 rrr l1 l2 = (rotaterev l1, rotaterev l2)
 
 main :: IO ()
-main = do
-    s <- getLine
-    parseArgs s
+main = getArgs >>= processArgs
+
+processArgs :: [String] -> IO ()
+processArgs args
+    | null args = putStrLn "84"
+    | otherwise = do
+        let l_a = map read args :: [Int]
+        operations <- getLine
+        let ops = words operations
+        let (final_l_a, final_l_b) = foldl doOperation (l_a, []) ops
+        putStrLn $ resultMessage final_l_a final_l_b
+
+resultMessage :: [Int] -> [Int] -> String
+resultMessage final_l_a final_l_b
+    | isSorted final_l_a && null final_l_b = "OK"
+    | otherwise = "KO: (" ++ show final_l_a ++ "," ++ show final_l_b ++ ")"
