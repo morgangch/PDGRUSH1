@@ -10,6 +10,34 @@ on:
       - 'ga-ignore-*'
 
 jobs:
+  check_coding_style:
+    if: ${{ github.repository == 'morgangch/PDGRUSH1' }}
+    name: "Use coding_style_checker"
+    runs-on: ubuntu-latest
+    container: ghcr.io/epitech/coding-style-checker:latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Create directory for reports
+        run: mkdir -p coding-style-reports
+
+      - name: Run coding style checker
+        id: check_coding_style
+        run: |
+          ./check.sh $(pwd) $(pwd)/coding-style-reports
+          CODING_STYLE_ERRORS=$(cat $(pwd)/coding-style-reports/coding-style-reports.log)
+          for ERRORS in $CODING_STYLE_ERRORS; do
+            array=(`echo $ERRORS | sed 's/:/\n/g'`)
+            echo "::error file=${array[1]#./},title=${array[3]#./} coding style errors detected: ${array[2]#./}::${array[4]#./}"
+          done
+          if [[ -n $CODING_STYLE_ERRORS ]]
+          then
+            exit 1
+          else
+            echo "No coding style errors detected"
+          fi
+  
   check_repo:
     if: ${{ github.repository == 'morgangch/PDGRUSH1' }}
     name: "Checks if the repository is clean and void of any unwanted files (temp files, binary files, etc.)"
@@ -53,7 +81,7 @@ jobs:
         timeout-minutes: 2
 
   push_to_mirror:
-    needs: [check_repo, check_program_compilation]
+    needs: [check_coding_style, check_repo, check_program_compilation]
     if: ${{ github.event_name == 'push' && github.actor != 'github-actions[bot]' }}
     runs-on: ubuntu-latest
     steps:
