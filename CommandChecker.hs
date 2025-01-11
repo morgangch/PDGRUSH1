@@ -6,7 +6,7 @@
 -}
 
 module CommandChecker (isSorted, doOperation) where
-import System.Environment (getArgs)
+import System.Environment()
 import Data.List (sort)
 import Utilities (swap, swapb, pa, pb, rotate, rr, rotaterev, rrr)
 

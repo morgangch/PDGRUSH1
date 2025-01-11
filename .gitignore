@@ -60,4 +60,11 @@ cabal.project.local~
 .history
 .ionide
 
+### BINARY FILE
+# Ignore the compiled binary file
+*.exe
+*.out
+*.o
+pushswap_checker
+
 # End of https://www.toptal.com/developers/gitignore/api/haskell,linux,visualstudiocode

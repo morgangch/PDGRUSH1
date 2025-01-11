@@ -6,7 +6,7 @@
 -}
 
 module Main where
-import System.Exit(exitWith, exitFailure)
+import System.Exit(exitFailure)
 import System.Environment (getArgs)
 import Data.Char (isDigit)
 import CommandChecker (isSorted, doOperation)
