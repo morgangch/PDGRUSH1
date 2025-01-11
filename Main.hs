@@ -49,16 +49,13 @@ main = do
     else do
         line <- getLine
         let s = parseArgs line
-        maybe exitFailure processArgs s
+        processArgs i s
 
-processArgs :: [String] -> IO ()
-processArgs args
+processArgs :: [Int] -> Maybe [String] -> IO ()
+processArgs l_a (Just args)
     | null args = exitFailure
     | otherwise = do
-        let l_a = map read args :: [Int]
-        operations <- getLine
-        let ops = words operations
-        let (final_l_a, final_l_b) = foldl doOperation (l_a, []) ops
+        let (final_l_a, final_l_b) = foldl doOperation (l_a, []) args
         putStrLn $ resultMessage final_l_a final_l_b
 
 resultMessage :: [Int] -> [Int] -> String
