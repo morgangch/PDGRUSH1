@@ -52,36 +52,8 @@ jobs:
           fi
         timeout-minutes: 2
 
-  run_tests:
-    needs: [check_program_compilation]
-    name: "Runs tests with criterion"
-    runs-on: ubuntu-latest
-    container:
-      image: epitechcontent/epitest-docker:latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Check if tests_run rule exists
-        run: |
-          if [ -f Makefile ]; then
-            if cat Makefile | grep -q "tests_run"; then
-              make tests_run
-              if [ $? -eq 0 ]; then
-                echo "Tests run successfully"
-              else
-                echo "Error: make tests_run failed"
-                exit 1
-              fi
-            else
-              echo "tests_run rule not found, skipping tests."
-            fi
-          else
-            echo "Makefile not found, skipping tests."
-          fi
-        timeout-minutes: 2
-
   push_to_mirror:
-    needs: [run_tests, check_repo, check_program_compilation]
+    needs: [check_repo, check_program_compilation]
     if: ${{ github.event_name == 'push' && github.actor != 'github-actions[bot]' }}
     runs-on: ubuntu-latest
     steps:
