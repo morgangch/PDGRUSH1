@@ -1,6 +1,6 @@
-module TestMain (testIsOperator, testParseArgs, testMyReadMaybe, testParseInts, testHasInvalidOp, testHasInvalidInt) where
+module TestMain (testIsOperator, testParseArgs, testParseInts, testHasInvalidOp, testHasInvalidInt) where
 import Test.HUnit
-import Main (isOperator, parseArgs, myReadMaybe, parseInts, hasInvalidOp, hasInvalidInt)
+import Main (isOperator, parseArgs, parseInts, hasInvalidOp, hasInvalidInt)
 
 testIsOperator = TestList [
     TestCase (assertBool "for (isOperator \"sa\")," (isOperator "sa")),
@@ -28,14 +28,9 @@ testParseArgs = TestList [
     TestCase (assertEqual "for (parseArgs \"sa rrr\") (three characters operators)," (Just ["sa", "rrr"]) (parseArgs ["sa", "rrr"]))
     ]
 
-testMyReadMaybe = TestList [
-    TestCase (assertEqual "for (myReadMaybe \"123\")," 123 (myReadMaybe "123")),
-    TestCase (assertEqual "for (myReadMaybe \"abc\")," (-1) (myReadMaybe "abc"))
-    ]
-
 testParseInts = TestList [
-    TestCase (assertEqual "for (parseInts [\"123\", \"456\"])," [123, 456] (parseInts ["123", "456"])),
-    TestCase (assertEqual "for (parseInts [\"123\", \"abc\"])," [123, -1] (parseInts ["123", "abc"]))
+    TestCase (assertEqual "for (parseInts [\"123\", \"456\"])," [Just 123, Just 456] (parseInts ["123", "456"])),
+    TestCase (assertEqual "for (parseInts [\"123\", \"abc\"])," [Just 123, Nothing] (parseInts ["123", "abc"]))
     ]
 
 testHasInvalidOp = TestList [
@@ -44,8 +39,9 @@ testHasInvalidOp = TestList [
     ]
 
 testHasInvalidInt = TestList [
-    TestCase (assertBool "for (hasInvalidInt [123, 456])," (not (hasInvalidInt [123, 456]))),
-    TestCase (assertBool "for (hasInvalidInt [123, -1])," (hasInvalidInt [123, -1]))
+    TestCase (assertBool "for (hasInvalidInt [123, 456])," (not (hasInvalidInt [Just 123, Just 456]))),
+    TestCase (assertBool "for (hasInvalidInt [123, -1])," (not (hasInvalidInt [Just 123, Just (-1)]))),
+    TestCase (assertBool "for (hasInvalidInt [123, Nothing])," (hasInvalidInt [Just 123, Nothing]))
     ]
 
 
