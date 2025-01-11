@@ -5,8 +5,10 @@
 -- $CommandChecker.hs
 -}
 
+module CommandChecker (isSorted, doOperation) where
 import System.Environment (getArgs)
 import Data.List (sort)
+import Utilities (swap, swapb, pa, pb, rotate, rr, rotaterev, rrr)
 
 isSorted :: [Int] -> Bool
 isSorted xs = xs == sort xs

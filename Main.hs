@@ -6,8 +6,10 @@
 -}
 
 module Main where
-import System.Exit()
+import System.Exit(exitWith, exitFailure)
 import System.Environment (getArgs)
+import Data.Char (isDigit)
+import CommandChecker (isSorted, doOperation)
 
 isOperator :: String -> Bool
 isOperator "sa" = True
@@ -23,49 +25,35 @@ isOperator "rrb" = True
 isOperator "rrr" = True
 isOperator _ = False
 
-parseArgs :: String -> IO ()
-parseArgs [] = putStrLn "No arguments"
-parseArgs [_] = putStrLn "Incomplete argument"
+parseArgs :: String -> Maybe [String]
+parseArgs [] = Nothing
+parseArgs [_] = Nothing
 parseArgs (x:y:xs)
-    | isOperator [x,y] = putStrLn [x,y] >> parseArgs xs
+    | isOperator [x,y] = case parseArgs xs of
+                            Just ops -> Just ([x,y] : ops)
+                            Nothing -> Just [[x,y]]
     | otherwise = parseArgs xs
 
-swap :: [a] -> [a]
-swap [] = []
-swap [x] = [x]
-swap (x:y:xs) = y : x : xs
-
-swapb :: [a] -> [a] -> ([a], [a])
-swapb l1 l2 = (swap l1, swap l2)
-
-pa :: [a] -> [a] -> ([a], [a])
-pa l1 [] = (l1, [])
-pa l1 (x:xs) = (x : l1, xs)
-
-pb :: [a] -> [a] -> ([a], [a])
-pb [] l2 = ([], l2)
-pb (x:xs) l2 = (xs, x : l2)
-
-rotate :: [a] -> [a] 
-rotate [] = []
-rotate (x:xs) = xs ++ [x]
-
-rr :: [a] -> [a] -> ([a], [a])
-rr l1 l2 = (rotate l1, rotate l2)
-
-rotaterev :: [a] -> [a]
-rotaterev [] = []
-rotaterev list = last list : init list
-
-rrr :: [a] -> [a] -> ([a], [a])
-rrr l1 l2 = (rotaterev l1, rotaterev l2)
+parseInts :: String -> [Int]
+parseInts [] = []
+parseInts (x:xs)
+    | isDigit x = read [x] : parseInts xs
+    | otherwise = parseInts xs
 
 main :: IO ()
-main = getArgs >>= processArgs
+main = do
+    args <- getArgs
+    let i = parseInts (concat args)
+    if null args then
+        exitFailure
+    else do
+        line <- getLine
+        let s = parseArgs line
+        maybe exitFailure processArgs s
 
 processArgs :: [String] -> IO ()
 processArgs args
-    | null args = putStrLn "84"
+    | null args = exitFailure
     | otherwise = do
         let l_a = map read args :: [Int]
         operations <- getLine

@@ -9,7 +9,9 @@ NAME = pushswap_checker
 TEST_NAME = test
 
 MAIN = Main
-SRC = Main.hs
+SRCS = 	Main.hs \
+		CommandChecker.hs \
+		Utilities.hs
 TEST_DIR = tests/
 TEST_SRC = $(TEST_DIR)test.hs
 COVERAGE_DIR = $(TEST_DIR)coverage/
@@ -19,7 +21,7 @@ GHC_FLAGS = -Wall -Wextra -main-is $(MAIN)
 all: $(NAME)
 
 $(NAME):
-	@ghc $(SRC) -o $(NAME) $(GHC_FLAGS)
+	@ghc $(SRCS) -o $(NAME) $(GHC_FLAGS)
 
 install:
 	stack update
