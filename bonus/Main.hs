@@ -37,7 +37,6 @@ parseArgs str
             Nothing -> Just [take 2 str]
     | otherwise = case head str of
         ' ' -> parseArgs (tail str)
-        '\n' -> parseArgs (tail str)
         _ -> Just ["IP"]
 
 myReadMaybe :: String -> Int
@@ -76,7 +75,7 @@ main = do
 processArgs :: [Int] -> Maybe [String] -> IO ()
 processArgs l_a (Just args)
     | null args = exitWith (ExitFailure 84)
-    | hasInvalidOp args = exitFailure
+    | hasInvalidOp args = exitWith (ExitFailure 84)
     | otherwise =
         let (final_l_a, final_l_b) = foldl doOperation (l_a, []) args
         in putStrLn $ resultMessage final_l_a final_l_b

@@ -36,7 +36,6 @@ parseArgs str
             Nothing -> Just [take 2 str]
     | otherwise = case head str of
         ' ' -> parseArgs (tail str)
-        '\n' -> parseArgs (tail str)
         _ -> Just ["IP"]
 
 myReadMaybe :: String -> Int

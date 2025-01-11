@@ -30,6 +30,8 @@ def test_makefile():
         "test",
         "tests_run",
         "tests_re",
+        "bonus",
+        "bonus_re",
         None  # Equivalent to just "make"
     ]
     
@@ -65,8 +67,16 @@ def test_main():
         capture_output=True,
         text=True
     )
-    # Vérifie le code de retour
     assert process_2.returncode == 84, error_messages("B2", "84", process_2.returncode)
+    
+    print("Testing main | Operators: pa pa pb | Ints: undefined | Expected: return 84")
+    process_3 = subprocess.run(
+        f'cd .. && echo "pa pa pb" | ./{Binary_name}',
+        shell=True,
+        capture_output=True,
+        text=True
+    )
+    assert process_3.returncode == 84, error_messages("B3", "84", process_3.returncode)
 
 if __name__ == "__main__":
     test_makefile()

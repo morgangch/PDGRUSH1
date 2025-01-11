@@ -7,6 +7,7 @@
 
 NAME = pushswap_checker
 TEST_NAME = test
+BONUS_NAME = pushswap_checker_bonus
 
 MAIN = Main
 TEST_MAIN = Test
@@ -14,6 +15,10 @@ TEST_MAIN = Test
 SRCS = 	Main.hs \
 		CommandChecker.hs \
 		Utilities.hs
+BONUS_SRCS = bonus/Main.hs \
+			bonus/CommandChecker.hs \
+			bonus/Utilities.hs \
+			bonus/My.hs
 
 TEST_DIR = tests/
 TEST_SRC = 	$(TEST_DIR)test.hs \
@@ -44,7 +49,9 @@ clean:
 fclean: clean
 	rm -rf $(NAME) $(TEST_NAME) ./$(TEST_DIR)*.tix \
 	./$(TEST_DIR)*.o ./$(TEST_DIR)*.hi \
-	./$(COVERAGE_DIR)*.tix ./$(COVERAGE_DIR)*.html
+	./$(COVERAGE_DIR)*.tix ./$(COVERAGE_DIR)*.html \
+	./$(BONUS_NAME) ./$(BONUS_DIR)*.tix \
+	./$(BONUS_DIR)*.o ./$(BONUS_DIR)*.hi
 
 re: fclean all
 
@@ -59,4 +66,11 @@ tests_run: test
 
 tests_re: fclean tests_run
 
-.PHONY: all clean fclean re test tests_run tests_re
+$(BONUS_NAME):
+	@ghc $(BONUS_SRCS) -o $(BONUS_NAME) $(GHC_FLAGS)
+
+Bonus: $(BONUS_NAME)
+
+Bonus_re: fclean $(BONUS_NAME)
+
+.PHONY: all clean fclean re test tests_run tests_re Bonus Bonus_re

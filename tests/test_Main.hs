@@ -23,7 +23,8 @@ testParseArgs = TestList [
     TestCase (assertEqual "for (parseArgs \"sa sb\")," (Just ["sa", "sb"]) (parseArgs "sa sb")),
     TestCase (assertEqual "for (parseArgs \"sa invalid\")," (Just ["sa", "IP"]) (parseArgs "sa invalid")),
     TestCase (assertEqual "for (parseArgs \"\")," (Just []) (parseArgs "")),
-    TestCase (assertEqual "for (parseArgs \"invalid\")," (Just ["IP"]) (parseArgs "invalid"))
+    TestCase (assertEqual "for (parseArgs \"invalid\")," (Just ["IP"]) (parseArgs "invalid")),
+    TestCase (assertEqual "for (parseArgs \"su invalid\")," (Just ["sa", "IP"]) (parseArgs "sa su"))    
     ]
 
 testMyReadMaybe = TestList [

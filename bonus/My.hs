@@ -5,7 +5,7 @@
 -- a lot of fonctions
 -}
 
-module My where
+module My (myQuickSort) where
 
 mySucc :: Int -> Int
 mySucc a = a + 1
