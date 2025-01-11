@@ -1,5 +1,5 @@
 module Main where
-import System.Exit (exitWith, exitSuccess)
+import System.Exit()
 
 isOperator :: String -> Bool
 isOperator "sa" = True
@@ -15,12 +15,14 @@ isOperator "rrb" = True
 isOperator "rrr" = True
 isOperator _ = False
 
-parseArgs :: [String] -> IO ()
+parseArgs :: String -> IO ()
 parseArgs [] = putStrLn "No arguments"
-parseArgs (x:xs)
-    | isOperator x = putStrLn x >> parseArgs xs
+parseArgs [_] = putStrLn "Incomplete argument"
+parseArgs (x:y:xs)
+    | isOperator [x,y] = putStrLn [x,y] >> parseArgs xs
     | otherwise = parseArgs xs
 
 main :: IO ()
 main = do
-    exitSuccess
+    s <- getLine
+    parseArgs s

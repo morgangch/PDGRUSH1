@@ -10,13 +10,13 @@ TEST_NAME = test
 
 MAIN = Main
 SRC = Main.hs
-TEST_DIR = test/
-TEST_SRC = $(TEST_DIR)TestDoOp.hs
+TEST_DIR = tests/
+TEST_SRC = $(TEST_DIR)test.hs
 COVERAGE_DIR = $(TEST_DIR)coverage/
 
 GHC_FLAGS = -Wall -Wextra -main-is $(MAIN)
 
-all: $(NAME) $(TEST_NAME)
+all: $(NAME)
 
 $(NAME):
 	@ghc $(SRC) -o $(NAME) $(GHC_FLAGS)
