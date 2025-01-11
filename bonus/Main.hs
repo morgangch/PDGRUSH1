@@ -83,5 +83,5 @@ processArgs _ Nothing = exitWith (ExitFailure 84)
 
 resultMessage :: [Int] -> [Int] -> String
 resultMessage final_l_a final_l_b
-    | isSorted final_l_a = "OK"
-    | otherwise = "KO: (" ++ show final_l_a ++ "," ++ show final_l_b ++ ")"
+    | isSorted final_l_a = "\ESC[32mOK\ESC[0m"
+    | otherwise = "\ESC[31mKO\ESC[0m: (" ++ show final_l_a ++ "," ++ show final_l_b ++ ")"
