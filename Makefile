@@ -77,10 +77,12 @@ Bonus: $(BONUS_NAME)
 Bonus_re: fclean $(BONUS_NAME)
 
 Bonus_tests_run: install
-	@ghc -i$(BONUS_DIR) $(TEST_BONUS_SRC) $(BONUS_SRCS) -o $(TEST_NAME) $(TEST_FLAGS) -main-is TestBonuses
+	@ghc -i$(BONUS_DIR) $(TEST_BONUS_SRC) $(BONUS_SRCS) \
+		-o $(TEST_NAME) $(TEST_FLAGS) -main-is TestBonuses
 	./$(TEST_NAME)
 	mv ./$(TEST_NAME).tix ./$(COVERAGE_DIR)
 	hpc report $(COVERAGE_DIR)$(TEST_NAME).tix
 	hpc markup $(COVERAGE_DIR)$(TEST_NAME).tix --destdir ./$(COVERAGE_DIR)
 
-.PHONY: all clean fclean re test tests_run tests_re Bonus Bonus_re Bonus_tests_run
+.PHONY: all clean fclean re test tests_run \
+	tests_re Bonus Bonus_re Bonus_tests_run

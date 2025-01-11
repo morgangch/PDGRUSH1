@@ -8,11 +8,10 @@
 module Main where
 import System.Exit (exitWith, ExitCode(..))
 import System.Environment (getArgs)
-import Data.Char (isDigit)
 import CommandChecker (isSorted, doOperation)
 import Text.Read (readMaybe)
 import My (myQuickSort)
-import Data.Maybe (Maybe(Nothing))
+import Data.Maybe (isNothing, catMaybes)
 
 isOperator :: String -> Bool
 isOperator "sa" = True
@@ -58,19 +57,19 @@ hasInvalidOp (_:xs) = hasInvalidOp xs
 hasInvalidInt :: [Maybe Int] -> Bool
 hasInvalidInt [] = False
 hasInvalidInt (x:xs)
-    | x isNothing = True
+    | isNothing x = True
     | otherwise = hasInvalidInt xs
 
 main :: IO ()
 main = do
     args <- getArgs
     let i = parseInts args
-    if null args || hasInvalidInt i then
+    if hasInvalidInt i then
         exitWith (ExitFailure 84)
     else do
         line <- getLine
         let s = parseArgs (words line)
-        processArgs i s
+        processArgs (catMaybes i) s
 
 processArgs :: [Int] -> Maybe [String] -> IO ()
 processArgs l_a (Just args)

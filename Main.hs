@@ -56,7 +56,7 @@ main :: IO ()
 main = do
     args <- getArgs
     let i = parseInts args
-    if null args || hasInvalidInt i then
+    if hasInvalidInt i then
         exitWith (ExitFailure 84)
     else do
         line <- getLine
