@@ -8,7 +8,8 @@
 module CommandChecker (isSorted, doOperation) where
 import System.Environment()
 import Data.List (sort)
-import Utilities (swap, swapb, pa, pb, rotate, rr, rotaterev, rrr)
+import Utilities (swap, swapb, pa, pb, rotate, rr, rotaterev, rrr, qs, qsc)
+import My()
 
 isSorted :: [Int] -> Bool
 isSorted xs = xs == sort xs
@@ -25,4 +26,7 @@ doOperation (l_a, l_b) "rr" = rr l_a l_b
 doOperation (l_a, l_b) "rra" = (rotaterev l_a, l_b)
 doOperation (l_a, l_b) "rrb" = (l_a, rotaterev l_b)
 doOperation (l_a, l_b) "rrr" = rrr l_a l_b
+doOperation (l_a, l_b) "qsa" = (qs l_a, l_b)
+doOperation (l_a, l_b) "qsb" = (l_a, qs l_b)
+doOperation (l_a, l_b) "qsc" = qsc l_a l_b
 doOperation (l_a, l_b) _ = (l_a, l_b)

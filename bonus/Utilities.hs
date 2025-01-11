@@ -4,8 +4,11 @@
 -- File description:
 -- $Utilities.hs
 -}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Eta reduce" #-}
 
-module Utilities (swap, swapb, pa, pb, rotate, rr, rotaterev, rrr) where
+module Utilities (swap, swapb, pa, pb, rotate, rr, rotaterev, rrr, qs, qsc) where
+import My (myQuickSort)
 
 swap :: [a] -> [a]
 swap [] = []
@@ -36,3 +39,9 @@ rotaterev list = last list : init list
 
 rrr :: [a] -> [a] -> ([a], [a])
 rrr l1 l2 = (rotaterev l1, rotaterev l2)
+
+qs :: [Int] -> [Int]
+qs l = myQuickSort (<) l
+
+qsc :: [Int] -> [Int] -> ([Int], [Int])
+qsc l1 l2 = (qs l1, qs l2)

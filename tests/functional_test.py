@@ -30,8 +30,8 @@ def test_makefile():
         "test",
         "tests_run",
         "tests_re",
-        "bonus",
-        "bonus_re",
+        "Bonus",
+        "Bonus_re",
         None  # Equivalent to just "make"
     ]
     
@@ -82,4 +82,5 @@ if __name__ == "__main__":
     test_makefile()
     makefile_cmd("re")
     test_main()
+    makefile_cmd("fclean")
     print("All tests passed!")

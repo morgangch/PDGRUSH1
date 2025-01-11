@@ -27,16 +27,15 @@ isOperator "rrr" = True
 isOperator " " = False
 isOperator _ = False
 
-parseArgs :: String -> Maybe [String]
+parseArgs :: [String] -> Maybe [String]
 parseArgs [] = Just []
-parseArgs str
-    | length str >= 2 && isOperator (take 2 str) =
-        case parseArgs (drop 2 str) of
-            Just ops -> Just (take 2 str : ops)
-            Nothing -> Just [take 2 str]
-    | otherwise = case head str of
-        ' ' -> parseArgs (tail str)
-        _ -> Just ["IP"]
+parseArgs (x:xs)
+    | isOperator x = case parseArgs xs of
+        Just l -> Just (x : l)
+        Nothing -> 
+            if null xs then Just [x]
+            else Just ["IP"]
+    | otherwise = Just ["IP"]
 
 myReadMaybe :: String -> Int
 myReadMaybe s = case readMaybe s of
@@ -68,7 +67,7 @@ main = do
         exitWith (ExitFailure 84)
     else do
         line <- getLine
-        let s = parseArgs line
+        let s = parseArgs (words line)
         processArgs i s
 
 processArgs :: [Int] -> Maybe [String] -> IO ()

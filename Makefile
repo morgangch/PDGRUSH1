@@ -25,6 +25,7 @@ TEST_SRC = 	$(TEST_DIR)test.hs \
 			$(TEST_DIR)test_CommandChecker.hs \
 			$(TEST_DIR)test_Utilities.hs \
 			$(TEST_DIR)test_Main.hs
+BONUS_DIR = bonus/
 
 COVERAGE_DIR = $(TEST_DIR)coverage/
 

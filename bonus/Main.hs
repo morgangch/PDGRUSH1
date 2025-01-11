@@ -6,7 +6,7 @@
 -}
 
 module Main where
-import System.Exit (exitFailure, exitWith, ExitCode(..))
+import System.Exit (exitWith, ExitCode(..))
 import System.Environment (getArgs)
 import Data.Char (isDigit)
 import CommandChecker (isSorted, doOperation)
@@ -25,19 +25,21 @@ isOperator "rr" = True
 isOperator "rra" = True
 isOperator "rrb" = True
 isOperator "rrr" = True
+isOperator "qsa" = True
+isOperator "qsb" = True
+isOperator "qsc" = True
 isOperator " " = False
 isOperator _ = False
 
-parseArgs :: String -> Maybe [String]
+parseArgs :: [String] -> Maybe [String]
 parseArgs [] = Just []
-parseArgs str
-    | length str >= 2 && isOperator (take 2 str) =
-        case parseArgs (drop 2 str) of
-            Just ops -> Just (take 2 str : ops)
-            Nothing -> Just [take 2 str]
-    | otherwise = case head str of
-        ' ' -> parseArgs (tail str)
-        _ -> Just ["IP"]
+parseArgs (x:xs)
+    | isOperator x = case parseArgs xs of
+        Just l -> Just (x : l)
+        Nothing -> 
+            if null xs then Just [x]
+            else Just ["IP"]
+    | otherwise = Just ["IP"]
 
 myReadMaybe :: String -> Int
 myReadMaybe s = case readMaybe s of
@@ -69,7 +71,7 @@ main = do
         exitWith (ExitFailure 84)
     else do
         line <- getLine
-        let s = parseArgs line
+        let s = parseArgs (words line)
         processArgs i s
 
 processArgs :: [Int] -> Maybe [String] -> IO ()
@@ -84,10 +86,21 @@ processArgs _ Nothing = exitWith (ExitFailure 84)
 -- print the list with color : green if sorted, red otherwise number per number
 myshowfinal :: [Int] -> [Int] -> String
 myshowfinal [] _ = ""
+myshowfinal [x] [] = "\ESC[31m" ++ show x ++ "\ESC[0m"
+myshowfinal (x:xs) [] = "\ESC[31m" ++ show x ++ "\ESC[0m," ++ myshowfinal xs []
 myshowfinal [x] [y] | x == y = "\ESC[32m" ++ show x ++ "\ESC[0m"
     | otherwise = "\ESC[31m" ++ show x ++ "\ESC[0m"
 myshowfinal (x:xs) (y:ys) | x == y = "\ESC[32m" ++ show x ++ "\ESC[0m," ++ myshowfinal xs ys
     | otherwise = "\ESC[31m" ++ show x ++ "\ESC[0m," ++ myshowfinal xs ys
+
+{-
+myshowfinal [] _ = ""
+myshowfinal [x] [y] | x == y = "\ESC[32m" ++ show x ++ "\ESC[0m"
+    | otherwise = "\ESC[31m" ++ show x ++ "\ESC[0m"
+myshowfinal (x:xs) (y:ys) | x == y = "\ESC[32m" ++ show x ++ "\ESC[0m," ++ myshowfinal xs ys
+    | otherwise = "\ESC[31m" ++ show x ++ "\ESC[0m," ++ myshowfinal xs ys
+myshowfinal (x:xs) [] = "\ESC[31m" ++ show x ++ "\ESC[0m," ++ myshowfinal xs []
+--}
 
 resultMessage :: [Int] -> [Int] -> String
 resultMessage final_l_a final_l_b
