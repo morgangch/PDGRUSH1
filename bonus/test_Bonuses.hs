@@ -64,13 +64,15 @@
         ]
     main :: IO ()
     main = do
-        runTestTT testQs
-        runTestTT testQsc
-        runTestTT testGenerateSeed
-        runTestTT testShuffleOne
-        runTestTT testShuffleTwo
-        runTestTT testDoOperation
-        runTestTT testMyshowfinal
-        runTestTT testResultMessage
+        runTestTT $ TestList [
+            testQs,
+            testQsc,
+            testGenerateSeed,
+            testShuffleOne,
+            testShuffleTwo,
+            testDoOperation,
+            testMyshowfinal,
+            testResultMessage
+            ]
         return ()
 

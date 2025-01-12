@@ -4,6 +4,7 @@ import os
 import sys
 import subprocess
 from argcomplete import debug
+import pyperclip
 
 Makefile_path = os.path.join(os.path.dirname(__file__), '../Makefile')
 Binary_name = "pushswap_checker"
@@ -29,6 +30,7 @@ class Test:
         self.output = None
         self.error:int = 0
         self.status:bool = None
+        self.action = action
         if run:
             self.start_subprocess(action)
         else:
@@ -127,24 +129,24 @@ def test_makefile():
     )]
     
     makefile_commands = [
-        ("all", 0, ""),
-        ("clean", 0, ""),
-        ("fclean", 0, ""),
-        ("re", 0, ""),
-        ("test", 0, ""),
-        ("tests_run", 0, ""),
-        ("tests_re", 0, ""),
-        ("Bonus", 0, ""),
-        ("Bonus_re", 0, ""),
-        ("Bonus_tests_run", 0, ""),
-        (None, 0, "")  # Equivalent to just "make" or "make all"
+        ("all", 0, "", get_line_number()),
+        ("clean", 0, "", get_line_number()),
+        ("fclean", 0, "", get_line_number()),
+        ("re", 0, "", get_line_number()),
+        ("test", 0, "", get_line_number()),
+        ("tests_run", 0, "", get_line_number()),
+        ("tests_re", 0, "", get_line_number()),
+        ("Bonus", 0, "", get_line_number()),
+        ("Bonus_re", 0, "", get_line_number()),
+        ("Bonus_tests_run", 0, "", get_line_number()),
+        (None, 0, "", get_line_number()) # Equivalent to just "make" or "make all"
     ]
 
-    for i, (cmd, expected_code, expected_stdout) in enumerate(makefile_commands, 1):
+    for i, (cmd, expected_code, expected_stdout, line) in enumerate(makefile_commands, 1):
         test_name = f"A{i}"
         test = Test(
             name=test_name,
-            line=get_line_number(),
+            line=line,
             description=f"Makefile {cmd} command test",
             stdout_expected=expected_stdout,
             stderr_expected=expected_code,
@@ -172,6 +174,7 @@ def test_main():
     test_cases = [
         {
             "name": "B1",
+            "line": get_line_number(),
             "description": "Operators: pa pa pb | Ints: 1 2 3 4 5 | Expected: KO: ([2,3,4,5],[1])",
             "cmd": f'cd .. && echo "pa pa pb" | ./{Binary_name} 1 2 3 4 5',
             "expected_stdout": "KO: ([2,3,4,5],[1])",
@@ -179,6 +182,7 @@ def test_main():
         },
         {
             "name": "B2",
+            "line": get_line_number(),
             "description": "Operators: undefined | Ints: 1 2 3 4 5 | Expected: return 84",
             "cmd": f'cd .. && echo undefined | ./{Binary_name} 1 2 3 4 5',
             "expected_stdout": "",
@@ -186,6 +190,7 @@ def test_main():
         },
         {
             "name": "B3",
+            "line": get_line_number(),
             "description": "Operators: pa pa pb | Ints: empty | Expected: return OK",
             "cmd": f'cd .. && echo "pa pa pb" | ./{Binary_name}',
             "expected_stdout": "OK\n",
@@ -193,6 +198,7 @@ def test_main():
         },
         {
             "name": "B4",
+            "line": get_line_number(),
             "description": "Operators: sa pb pb pb sa pa pa pa | Ints: 2 1 3 6 5 8",
             "cmd": f'cd .. && echo "sa pb pb pb sa pa pa pa" | ./{Binary_name} 2 1 3 6 5 8',
             "expected_stdout": "OK\n",
@@ -200,9 +206,107 @@ def test_main():
         },
         {
             "name": "B5",
+            "line": get_line_number(),
             "description": "Operators: sa pb pb pb | Ints: 2 1 3 6 5 8 | Expected: KO: ([6,5,8],[3,2,1])",
             "cmd": f'cd .. && echo "sa pb pb pb" | ./{Binary_name} 2 1 3 6 5 8',
             "expected_stdout": "KO: ([6,5,8],[3,2,1])\n",
+            "expected_returncode": 0
+        },
+        {
+            "name": "B6",
+            "line": get_line_number(),
+            "description": "Operators: pb pa | Ints: 4 3 2 1 | Expected: OK",
+            "cmd": f'cd .. && echo "pb pa" | ./{Binary_name} 4 3 2 1',
+            "expected_stdout": "KO: ([4,3,2,1],[])\n",
+            "expected_returncode": 0
+        },
+        {
+            "name": "B7",
+            "line": get_line_number(),
+            "description": "Operators: ra ra rra | Ints: 3 2 1 | Expected: KO: ([1,3,2],[])",
+            "cmd": f'cd .. && echo "ra ra rra" | ./{Binary_name} 3 2 1',
+            "expected_stdout": "KO: ([2,1,3],[])\n",
+            "expected_returncode": 0
+        },
+        {
+            "name": "B8",
+            "line": get_line_number(),
+            "description": "Operators: pb pb ra ra pa pa | Ints: 1 2 3 4 | Expected: OK",
+            "cmd": f'cd .. && echo "pb pb ra ra pa pa" | ./{Binary_name} 1 2 3 4',
+            "expected_stdout": "OK\n",
+            "expected_returncode": 0
+        },
+        {
+            "name": "B9",
+            "line": get_line_number(),
+            "description": "Operators: sb sa sb | Ints: 1 2 3 4 | Expected: OK",
+            "cmd": f'cd .. && echo "sb sa sb" | ./{Binary_name} 1 2 3 4',
+            "expected_stdout": "KO: ([2,1,3,4],[])\n",
+            "expected_returncode": 0
+        },
+        
+        {
+            "name": "B10",
+            "line": get_line_number(),
+            "description": "Operators: pb pb sa pb sa pa pa pa | Ints: 5 4 3 2 1 | Expected: OK",
+            "cmd": f'cd .. && echo "pb pb sa pb sa pa pa pa" | ./{Binary_name} 5 4 3 2 1',
+            "expected_stdout": "KO: ([5,4,2,1,3],[])\n",
+            "expected_returncode": 0
+        },
+        {
+            "name": "B11",
+            "line": get_line_number(),
+            "description": "Operators: pb pb pb pb | Ints: 6 5 4 3 2 1 | Expected: KO: ([3,2,1],[6,5,4])",
+            "cmd": f'cd .. && echo "pb pb pb pb" | ./{Binary_name} 6 5 4 3 2 1',
+            "expected_stdout": "KO: ([2,1],[3,4,5,6])\n",
+            "expected_returncode": 0
+        },
+        {
+            "name": "B12",
+            "line": get_line_number(),
+            "description": "Operators: sa pb ra pb rra pa pa | Ints: 9 8 7 6 5 4 | Expected: OK",
+            "cmd": f'cd .. && echo "sa pb ra pb rra pa pa" | ./{Binary_name} 9 8 7 6 5 4',
+            "expected_stdout": "KO: ([8,7,9,6,5,4],[])\n",
+            "expected_returncode": 0
+        },
+        {
+            "name": "B13",
+            "line": get_line_number(),
+            "description": "Operators: sss | Ints: 2 1 | Expected: Error 84",
+            "cmd": f'cd .. && echo "sss" | ./{Binary_name} 2 1',
+            "expected_stdout": "",
+            "expected_returncode": 84
+        },
+        {
+            "name": "B14",
+            "line": get_line_number(),
+            "description": "Operators: sb | Ints: empty | Expected: OK",
+            "cmd": f'cd .. && echo "sb" | ./{Binary_name}',
+            "expected_stdout": "OK\n",
+            "expected_returncode": 0
+        },
+        {
+            "name": "B15",
+            "line": get_line_number(),
+            "description": "Operators: pb sa | Ints: a b c | Expected: Error 84",
+            "cmd": f'cd .. && echo "pb sa" | ./{Binary_name} a b c',
+            "expected_stdout": "",
+            "expected_returncode": 84
+        },
+        {
+            "name": "B16",
+            "line": get_line_number(),
+            "description": "Operators: sa | Ints: 2147483647 -2147483648 | Expected: OK",
+            "cmd": f'cd .. && echo "sa" | ./{Binary_name} 2147483647 -2147483648',
+            "expected_stdout": "OK\n",
+            "expected_returncode": 0
+        },
+        {
+            "name": "B17",
+            "line": get_line_number(),
+            "description": "Operators: sa | Ints: 9223372036854775807 -9223372036854775808 | Expected: OK 0",
+            "cmd": f'cd .. && echo "sa" | ./{Binary_name} 9223372036854775807 -9223372036854775808',
+            "expected_stdout": "OK",
             "expected_returncode": 0
         }
     ]
@@ -211,7 +315,7 @@ def test_main():
     for test_case in test_cases:
         Test(
             name=test_case["name"], 
-            line=get_line_number(),
+            line=test_case["line"],
             description=test_case["description"], 
             stdout_expected=test_case["expected_stdout"], 
             stderr_expected=test_case["expected_returncode"],
@@ -239,7 +343,7 @@ if __name__ == "__main__":
     
     # Affichage du résultat global
     if len(failed_tests) == 0:
-        prGreen(f"All {len(passed_tests)} tests passed!")
+        prGreen(f"All {len(passed_tests)} tests passed!\n")
     else:
         prRed(f"{len(failed_tests)}")
         print(f"/{len(tests)} tests failed!")
@@ -249,6 +353,15 @@ if __name__ == "__main__":
         if test.status:
             prGreen(f"{i}. {test.name}")
         else:
-            prRed(f"{i}. {test.name}")  
+            prRed(f"{i}. {test.name}")
+            """ 
+            if input("\nGet the full command output and input? (y/n): \n") == "y":
+                print("Command output:", test.output)
+                print("Command error:", test.error)
+                print("Command expected output:", test.stdout_expected)
+                print("Command expected error:", test.stderr_expected)
+                print("Command result output:", test.result_sout)
+                print("Command result error:", test.result_serr)
+                pyperclip.copy(test.action.replace("cd .. && ", "")) """
         print("", end=" ")      
         test.display_status()
